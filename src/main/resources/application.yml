@@ -5,16 +5,31 @@ spring:
   application:
     name: ms-solicitudes
   r2dbc:
-    url: r2dbc:h2:mem:///solicitudesdb?options=DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password: 
+    url: r2dbc:postgresql://localhost:5433/crediya_db
+    username: postgres
+    password: esther
   sql:
     init:
-      mode: always
+      mode: never  # NO auto-crear esquemas, se crean manualmente
+      platform: postgres
+
+# Configuración JWT - DEBE coincidir con ms-autenticacion
+jwt:
+  secret: cHJhZ21hQ3JlZGl5YU1pY3Jvc2VydmljaW9BdXRlbnRpY2FjaW9uU2VjcmV0S2V5MjAyNQ==
 
 logging:
   level:
     com.pragma.crediya.solicitudes: DEBUG
     org.springframework.r2dbc: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2.jwt: DEBUG
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Configuración de servicios externos
+app:
+  services:
+    user-service:
+      base-url: http://localhost:8082  # Puerto actualizado del microservicio HU1
+      endpoints:
+        get-by-document: /api/v1/usuarios/documento/{documento}
